@@ -7,7 +7,9 @@ app = FastAPI()
 
 # Dataframes a usar
 df_reviews = pd.read_csv('data/df_reviews_unido.csv')
+df_gastos_items = pd.read_csv('data/df_gastos_items_unido.csv')
 df_genre_ranking = pd.read_csv('data/df_genre_ranking_unido.csv')
+df_playtime_forever = pd.read_csv('data/df_playtime_forever_unido.csv')
 df_items_developer = pd.read_csv('data/df_items_developer_unido.csv')
 
 @app.get(path="/", 
@@ -28,20 +30,26 @@ def home():
 def userdata(user_id: str = Query(..., 
                                 description="Identificador único del usuario", 
                                 example="EchoXSilence")):
-    
+    # Filtra por el usuario de interés
     usuario = df_reviews[df_reviews['user_id'] == user_id]
-    cantidad_dinero = usuario['price'].sum()
-    total_recomendaciones = usuario['reviews_recommend'].sum()
-    total_items = usuario['items_count'].sum()
+    # Calcula la cantidad de dinero gastado para el usuario de interés
+    cantidad_dinero = df_gastos_items[df_gastos_items['user_id']== user_id]['price'].iloc[0]
+    # Busca el count_item para el usuario de interés    
+    count_items = df_gastos_items[df_gastos_items['user_id']== user_id]['items_count'].iloc[0]
     
+    # Calcula el total de recomendaciones realizadas por el usuario de interés
+    total_recomendaciones = usuario['reviews_recommend'].sum()
+    # Calcula el total de reviews realizada por todos los usuarios
     total_reviews = len(df_reviews['user_id'].unique())
+    # Calcula el porcentaje de recomendaciones realizadas por el usuario de interés
     porcentaje_recomendaciones = (total_recomendaciones / total_reviews) * 100
     
     return {
         'cantidad_dinero': int(cantidad_dinero),
         'porcentaje_recomendacion': round(float(porcentaje_recomendaciones), 2),
-        'total_items': int(total_items)
+        'total_items': int(count_items)
     }
+    
     
 @app.get(path = '/countreviews',
           description = """ <font color="blue">
@@ -59,11 +67,16 @@ def countreviews(fecha_inicio: str = Query(...,
                                 description="Fechas de Fin para filtar la información", 
                                 example='2012-12-24')):
      
+    # Filtra el dataframe entre las fechas de interés
     user_data_entre_fechas = df_reviews[(df_reviews['reviews_date'] >= fecha_inicio) & (df_reviews['reviews_date'] <= fecha_fin)]
+    # Calcula la cantidad de usuarios que dieron reviews entre las fechas de interés
     total_usuarios = user_data_entre_fechas['user_id'].nunique()
-
-    total_recomendacion = user_data_entre_fechas['reviews_recommend'].sum()
-    porcentaje_recomendaciones = (total_usuarios / total_recomendacion) * 100
+    # Calcula el total de recomendaciones entre las fechas de interes (True + False)
+    total_recomendacion = len(user_data_entre_fechas)
+    # Calcula la cantidad de recomendaciones positivas que que hicieron entre las fechas de interés
+    total_recomendaciones_True = user_data_entre_fechas['reviews_recommend'].sum()
+    # Calcula el porcentaje de recomendación realizadas entre el total de usuarios
+    porcentaje_recomendaciones = (total_recomendaciones_True / total_recomendacion) * 100
     
     return {
         'total_usuarios_reviews': int(total_usuarios),
@@ -82,6 +95,7 @@ def countreviews(fecha_inicio: str = Query(...,
 def genre(genero: str = Query(..., 
                             description="Género del videojuego", 
                             example='Simulation')):
+    # Busca el ranking para el género de interés
     rank = df_genre_ranking[df_genre_ranking['genres'] == genero]['ranking'].iloc[0]
     return {
         'rank': int(rank)
@@ -99,14 +113,18 @@ def genre(genero: str = Query(...,
 def userforgenre(genero: str = Query(..., 
                             description="Género del videojuego", 
                             example='Simulation')):
-    data_por_genero = df_reviews[df_reviews['genres'] == genero]
+    # Filtra el dataframe por el género de interés
+    data_por_genero = df_playtime_forever[df_playtime_forever['genres'] == genero]
+    # Agrupa el dataframe filtrado por usuario y suma la cantidad de horas
     top_users = data_por_genero.groupby(['user_url', 'user_id'])['playtime_horas'].sum().nlargest(5).reset_index()
     
+    # Se hace un diccionario vacío para guardar los datos que se necesitan
     top_users_dict = {}
     for index, row in top_users.iterrows():
+        # User info recorre cada fila del top 5 y lo guarda en el diccionario
         user_info = {
             'user_id': row['user_id'],
-            'user_url': row['user_url'],
+            'user_url': row['user_url']
         }
         top_users_dict[index + 1] = user_info
     
@@ -123,14 +141,19 @@ def userforgenre(genero: str = Query(...,
 def developer(desarrollador: str = Query(..., 
                             description="Desarrollador del videojuego", 
                             example='Valve')):
+    # Filtra el dataframe por desarrollador de interés
     data_filtrada = df_items_developer[df_items_developer['developer'] == desarrollador]
-    
-    free_contenido_año = data_filtrada[data_filtrada['price'] == 0.0].groupby('release_anio').size()
-    total_contenido_año = data_filtrada.groupby('release_anio').size()
+    # Calcula la cantidad de items por año
+    cantidad_por_año = data_filtrada.groupby('release_anio')['item_id'].count()
+    # Calcula la cantidad de elementos gratis por año
+    cantidad_gratis_por_año = data_filtrada[data_filtrada['price'] == 0.0].groupby('release_anio')['item_id'].count()
+    # Calcula el porcentaje de elementos gratis por año
+    porcentaje_gratis_por_año = (cantidad_gratis_por_año / cantidad_por_año * 100).fillna(0).astype(int)
 
-    porcentaje = (free_contenido_año / total_contenido_año * 100).fillna(0).astype(int)
-
-    result_dict = {str(index): value for index, value in zip(porcentaje.index.tolist(), porcentaje.values.tolist())}
+    result_dict = {
+        'cantidad_por_año': cantidad_por_año.to_dict(),
+        'porcentaje_gratis_por_año': porcentaje_gratis_por_año.to_dict()
+    }
     
     return result_dict
 
