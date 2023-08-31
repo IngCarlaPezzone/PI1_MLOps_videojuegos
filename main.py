@@ -1,8 +1,10 @@
+# Importaciones
 from fastapi import FastAPI, Query
 from fastapi.responses import HTMLResponse
 import pandas as pd
 from api_functions import presentacion
 
+# Se instancia la aplicación
 app = FastAPI()
 
 # Dataframes a usar
@@ -12,10 +14,17 @@ df_genre_ranking = pd.read_csv('data/df_genre_ranking_unido.csv')
 df_playtime_forever = pd.read_csv('data/df_playtime_forever_unido.csv')
 df_items_developer = pd.read_csv('data/df_items_developer_unido.csv')
 
+
 @app.get(path="/", 
          response_class=HTMLResponse,
          tags=["Home"])
 def home():
+    '''
+    Página de inicio que muestra una presentación.
+
+    Returns:
+    HTMLResponse: Respuesta HTML que muestra la presentación.
+    '''
     return presentacion()
 
 @app.get(path = '/userdata',
@@ -30,6 +39,18 @@ def home():
 def userdata(user_id: str = Query(..., 
                                 description="Identificador único del usuario", 
                                 example="EchoXSilence")):
+    '''
+    Esta función devuelve información sobre un usuario según su 'user_id'.
+         
+    Args:
+        user_id (str): Identificador único del usuario.
+    
+    Returns:
+        dict: Un diccionario que contiene información sobre el usuario.
+            - 'cantidad_dinero' (int): Cantidad de dinero gastado por el usuario.
+            - 'porcentaje_recomendacion' (float): Porcentaje de recomendaciones realizadas por el usuario.
+            - 'total_items' (int): Cantidad de items que tiene el usuario.
+    '''
     # Filtra por el usuario de interés
     usuario = df_reviews[df_reviews['user_id'] == user_id]
     # Calcula la cantidad de dinero gastado para el usuario de interés
@@ -66,7 +87,18 @@ def countreviews(fecha_inicio: str = Query(...,
                  fecha_fin: str = Query(..., 
                                 description="Fechas de Fin para filtar la información", 
                                 example='2012-12-24')):
-     
+    '''
+    Esta función devuelve estadísticas sobre las reviews realizadas por los usuarios entre dos fechas.
+         
+    Args:
+        fecha_inicio (str): Fecha de inicio para filtrar la información en formato YYYY-MM-DD.
+        fecha_fin (str): Fecha de fin para filtrar la información en formato YYYY-MM-DD.
+    
+    Returns:
+        dict: Un diccionario que contiene estadísticas de las reviews entre las fechas especificadas.
+            - 'total_usuarios_reviews' (int): Cantidad de usuarios que realizaron reviews entre las fechas.
+            - 'porcentaje_recomendaciones' (float): Porcentaje de recomendaciones positivas (True) entre las reviews realizadas.
+    '''
     # Filtra el dataframe entre las fechas de interés
     user_data_entre_fechas = df_reviews[(df_reviews['reviews_date'] >= fecha_inicio) & (df_reviews['reviews_date'] <= fecha_fin)]
     # Calcula la cantidad de usuarios que dieron reviews entre las fechas de interés
@@ -95,6 +127,16 @@ def countreviews(fecha_inicio: str = Query(...,
 def genre(genero: str = Query(..., 
                             description="Género del videojuego", 
                             example='Simulation')):
+    '''
+    Esta función devuelve la posición de un género de videojuego en un ranking basado en la cantidad de horas jugadas.
+         
+    Args:
+        genero (str): Género del videojuego.
+    
+    Returns:
+        dict: Un diccionario que contiene la posición del género en el ranking.
+            - 'rank' (int): Posición del género en el ranking basado en las horas jugadas.
+    '''
     # Busca el ranking para el género de interés
     rank = df_genre_ranking[df_genre_ranking['genres'] == genero]['ranking'].iloc[0]
     return {
@@ -113,6 +155,17 @@ def genre(genero: str = Query(...,
 def userforgenre(genero: str = Query(..., 
                             description="Género del videojuego", 
                             example='Simulation')):
+    '''
+    Esta función devuelve el top 5 de usuarios con más horas de juego en un género específico, junto con su URL de perfil y ID de usuario.
+         
+    Args:
+        genero (str): Género del videojuego.
+    
+    Returns:
+        dict: Un diccionario que contiene el top 5 de usuarios con más horas de juego en el género dado, junto con su URL de perfil y ID de usuario.
+            - 'user_id' (str): ID del usuario.
+            - 'user_url' (str): URL del perfil del usuario.
+    '''
     # Filtra el dataframe por el género de interés
     data_por_genero = df_playtime_forever[df_playtime_forever['genres'] == genero]
     # Agrupa el dataframe filtrado por usuario y suma la cantidad de horas
@@ -141,6 +194,17 @@ def userforgenre(genero: str = Query(...,
 def developer(desarrollador: str = Query(..., 
                             description="Desarrollador del videojuego", 
                             example='Valve')):
+    '''
+    Esta función devuelve información sobre una empresa desarrolladora de videojuegos.
+         
+    Args:
+        desarrollador (str): Nombre del desarrollador de videojuegos.
+    
+    Returns:
+        dict: Un diccionario que contiene información sobre la empresa desarrolladora.
+            - 'cantidad_por_año' (dict): Cantidad de items desarrollados por año.
+            - 'porcentaje_gratis_por_año' (dict): Porcentaje de contenido gratuito por año según la empresa desarrolladora.
+    '''
     # Filtra el dataframe por desarrollador de interés
     data_filtrada = df_items_developer[df_items_developer['developer'] == desarrollador]
     # Calcula la cantidad de items por año
@@ -178,7 +242,6 @@ def sentiment_analysis(anio: str = Query(...,
     
     Returns:
         dict: Un diccionario con el recuento de categorías de sentimiento.
-            Ejemplo: {'Negative': 969, 'Neutral': 7783, 'Positive': 4817}
     '''
     # Filtra las reseñas del año específico
     anio_reviews = df_reviews[df_reviews['release_anio'] == anio]
