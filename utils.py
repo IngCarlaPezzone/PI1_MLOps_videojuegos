@@ -156,7 +156,15 @@ def reemplaza_a_flotante(value):
         return 0.0
     
 def convertir_fecha(cadena_fecha):
+    '''
+    Convierte una cadena de fecha en un formato específico a otro formato de fecha.
     
+    Args:
+    cadena_fecha (str): Cadena de fecha en el formato "Month Day, Year" (por ejemplo, "September 1, 2023").
+    
+    Returns:
+    str: Cadena de fecha en el formato "YYYY-MM-DD" o un mensaje de error si la cadena no cumple el formato esperado.
+    '''
     match = re.search(r'(\w+\s\d{1,2},\s\d{4})', cadena_fecha)
     if match:
         fecha_str = match.group(1)
