@@ -1,6 +1,12 @@
-
+# Funciones a utilizar en app.py
 
 def presentacion():
+    '''
+    Genera una página de presentación HTML para la API Steam de consultas de videojuegos.
+    
+    Returns:
+    str: Código HTML que muestra la página de presentación.
+    '''
     return '''
     <html>
         <head>
