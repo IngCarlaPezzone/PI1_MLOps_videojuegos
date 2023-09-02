@@ -1,6 +1,8 @@
 import pandas as pd
 from textblob import TextBlob
 import re
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def verificar_tipo_datos(df):
     '''
@@ -126,12 +128,9 @@ def obtener_anio_release(fecha):
         str: El año de la fecha si es válido, 'Dato no disponible' si es nula o el formato es incorrecto.
     '''
     if pd.notna(fecha):
-        try:
+        if re.match(r'^\d{4}-\d{2}-\d{2}$', fecha):
             return fecha.split('-')[0]
-        except:
-            return 'Dato no disponible'
-    else:
-        return 'Dato no disponible'
+    return 'Dato no disponible'
     
 def reemplaza_a_flotante(value):
     '''
@@ -176,3 +175,31 @@ def convertir_fecha(cadena_fecha):
     else:
         return 'Formato inválido'
 
+def resumen_cant_porcentaje(df, columna):
+    # Count the number of True and False values in the 'reviews_recommend' column
+    counts = df[columna].value_counts()
+
+    # Calculate the percentage of True and False values
+    percentages = round(100 * counts / len(df),2)
+
+    # Create a DataFrame with the counts and percentages
+    df_results = pd.DataFrame({
+        "Cantidad": counts,
+        "Porcentaje": percentages
+    })
+    return df_results
+
+def bigote_max(columna):
+    '''
+    Calcula el valor del bigote máximo y la cantidad de valores que se encuentran como valores atípicos.
+    '''
+    # Cuartiles
+    q1 = columna.describe()[4]
+    q3 = columna.describe()[6]
+
+    # Valor del vigote
+    bigote_max = round(q3 + 1.5*(q3 - q1), 2)
+    print(f'El bigote superior de la variable {columna.name} se ubica en:', bigote_max)
+
+    # Cantidad de atípicos
+    print(f'Hay {(columna > bigote_max).sum()} valores atípicos en la variable {columna.name}')
