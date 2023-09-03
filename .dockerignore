@@ -1,0 +1,5 @@
+# Excluye todos los archivos y directorios, excepto los necesarios para el despliegue
+*
+!main.py
+!api_functions.py
+!data/
