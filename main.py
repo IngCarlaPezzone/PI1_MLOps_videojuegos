@@ -2,6 +2,10 @@
 from fastapi import FastAPI, Query
 from fastapi.responses import HTMLResponse
 import pandas as pd
+import pandas as pd
+import pickle
+from surprise import SVD
+from sklearn.metrics.pairwise import cosine_similarity
 from api_functions import presentacion
 
 # Se instancia la aplicación
@@ -13,6 +17,13 @@ df_gastos_items = pd.read_csv('data/df_gastos_items_unido.csv')
 df_genre_ranking = pd.read_csv('data/df_genre_ranking_unido.csv')
 df_playtime_forever = pd.read_csv('data/df_playtime_forever_unido.csv')
 df_items_developer = pd.read_csv('data/df_items_developer_unido.csv')
+df = pd.read_csv('data/df_merged.csv')
+df_title = pd.read_csv('data/df_items_unicos.csv')
+df_usuario_unico = pd.read_csv('data/df_user_numericos.csv')
+
+# Se carga el modelo
+with open('modelo/modelo_svd.pkl', 'rb') as model_file:
+    model = pickle.load(model_file)
 
 
 @app.get(path="/", 
@@ -271,3 +282,71 @@ def sentiment_analysis(anio: str = Query(...,
             pass
     
     return sentiment_counts
+
+
+# Cargar la matriz desde el archivo CSV
+item_sim_df = pd.read_csv('data/item_sim_df.csv')
+
+@app.get('/recomendacion_usuario',
+         description=""" <font color="blue">
+                    INSTRUCCIONES<br>
+                    1. Haga clik en "Try it out".<br>
+                    2. Ingrese el id del usuario en box abajo.<br>
+                    3. Scrollear a "Resposes" para ver los juegos recomendados para ese usuario.
+                    </font>
+                    """,
+         tags=["Recomendación"])
+def top_game(game):
+    count = 1
+    similar_games = []
+    for item in item_sim_df.sort_values(by=game, ascending=False).item_name[1:6]:
+        similar_games.append({count: item})
+        count += 1
+    return {'Similar games': similar_games}
+
+
+piv_norm = pd.read_csv('data/piv_norm.csv')
+# user_sim_df = pd.read_csv('data/user_sim_df.csv')
+user_sim_df = pd.read_parquet('data/user_sim_df.parquet')
+import operator
+
+@app.get('/recomendacion_usuario2',
+         description=""" <font color="blue">
+                    INSTRUCCIONES<br>
+                    1. Haga clik en "Try it out".<br>
+                    2. Ingrese el id del usuario en box abajo.<br>
+                    3. Scrollear a "Resposes" para ver los juegos recomendados para ese usuario.
+                    </font>
+                    """,
+         tags=["Recomendación"])
+def similar_user_recs(user):
+    
+    if user not in piv_norm.columns:
+        return('No data available on user {}'.format(user))
+    
+    sim_users = user_sim_df.sort_values(by=user, ascending=False).user_id[1:11]
+    best = []
+    most_common = {}
+    
+    for i in sim_users:
+        i = str(i)
+        max_score = piv_norm.loc[:, i].max()
+        best.append(piv_norm[piv_norm.loc[:, i]==max_score].item_name.tolist())
+    for i in range(len(best)):
+        for j in best[i]:
+            if j in most_common:
+                most_common[j] += 1
+            else:
+                most_common[j] = 1
+    sorted_list = sorted(most_common.items(), key=operator.itemgetter(1), reverse=True)
+    recomendaciones = {}  # Inicializa un diccionario vacío
+    contador = 1  # Inicializa un contador en 1
+
+    for juego, _ in sorted_list:
+        if contador <= 5:  # Verifica si el contador es menor o igual a 5
+            recomendaciones[contador] = juego  # Asigna el número de contador como clave y el juego como valor
+            contador += 1  # Incrementa el contador
+        else:
+            break
+    # print(recomendaciones)
+    return recomendaciones 
