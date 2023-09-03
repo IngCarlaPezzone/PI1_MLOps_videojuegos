@@ -18,14 +18,14 @@ app = FastAPI()
 # df_items_developer = pd.read_csv('data/df_items_developer_unido.csv')
 # df = pd.read_csv('data/df_merged.csv')
 
-user_sim_df = pd.read_parquet('data/user_sim_df.parquet')
-df_reviews = pd.read_parquet('data/df_reviews.parquet')
-df_gastos_items = pd.read_parquet('data/df_gastos_items.parquet')
-df_genre_ranking = pd.read_parquet('data/df_genre_ranking.parquet')
-df_playtime_forever = pd.read_parquet('data/df_playtime_forever.parquet')
-df_items_developer = pd.read_parquet('data/df_items_developer.parquet')
-df = pd.read_parquet('data/df.parquet')
-piv_norm = pd.read_parquet('data/piv_norm.parquet')
+user_sim_df = pd.read_parquet('data_render/user_sim_df.parquet')
+df_reviews = pd.read_parquet('data_render/df_reviews.parquet')
+df_gastos_items = pd.read_parquet('data_render/df_gastos_items.parquet')
+df_genre_ranking = pd.read_parquet('data_render/df_genre_ranking.parquet')
+df_playtime_forever = pd.read_parquet('data_render/df_playtime_forever.parquet')
+df_items_developer = pd.read_parquet('data_render/df_items_developer.parquet')
+df = pd.read_parquet('data_render/df.parquet')
+piv_norm = pd.read_parquet('data_render/piv_norm.parquet')
 
 @app.get(path="/", 
          response_class=HTMLResponse,
