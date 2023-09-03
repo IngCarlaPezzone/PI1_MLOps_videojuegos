@@ -16,8 +16,6 @@ df_genre_ranking = pd.read_csv('data/df_genre_ranking_unido.csv')
 df_playtime_forever = pd.read_csv('data/df_playtime_forever_unido.csv')
 df_items_developer = pd.read_csv('data/df_items_developer_unido.csv')
 df = pd.read_csv('data/df_merged.csv')
-df_title = pd.read_csv('data/df_items_unicos.csv')
-df_usuario_unico = pd.read_csv('data/df_user_numericos.csv')
 
 
 
