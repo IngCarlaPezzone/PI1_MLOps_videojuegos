@@ -3,9 +3,7 @@ from fastapi import FastAPI, Query
 from fastapi.responses import HTMLResponse
 import pandas as pd
 import pandas as pd
-import pickle
-from surprise import SVD
-from sklearn.metrics.pairwise import cosine_similarity
+
 from api_functions import presentacion
 
 # Se instancia la aplicación
@@ -21,9 +19,6 @@ df = pd.read_csv('data/df_merged.csv')
 df_title = pd.read_csv('data/df_items_unicos.csv')
 df_usuario_unico = pd.read_csv('data/df_user_numericos.csv')
 
-# Se carga el modelo
-with open('modelo/modelo_svd.pkl', 'rb') as model_file:
-    model = pickle.load(model_file)
 
 
 @app.get(path="/", 
