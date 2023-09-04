@@ -15,19 +15,19 @@ Este proyecto simula el rol de un MLOps Engineer, es decir, la combinación de u
 
 ## Contexto
 
-Steam es una plataforma de distribución digital de videojuegos desarrollada por Valve Corporation. Fue lanzada en septiembre de 2003 como una forma para Valve de proveer actualizaciones automáticas a sus juegos, pero finalmente se amplió para incluir juegos de terceros. Cuenta con más de 325 millones de usuarios y más de 25.000 juegos en su catálogo. Es importante tener en cuenta que las cifras publicadas por SteamSpy hasta el año 2017, pero a principios de 2018 Steam limitó la forma de obtener estadísticas, por eso no hay datos tan precisos.
+Steam es una plataforma de distribución digital de videojuegos desarrollada por Valve Corporation. Fue lanzada en septiembre de 2003 como una forma para Valve de proveer actualizaciones automáticas a sus juegos, pero finalmente se amplió para incluir juegos de terceros. Cuenta con más de 325 millones de usuarios y más de 25.000 juegos en su catálogo. Es importante tener en cuenta que las cifras publicadas por SteamSpy son hasta el año 2017, porque a principios de 2018 Steam limitó la forma de obtener estadísticas, por eso no hay datos tan precisos.
 
 ## Datos
 
 Para este proyecto se proporcionaron tres archivos JSON:
 
-* **australian_user_reviews.json** es un dataset que contiene los comentarios que los usuarios realizaron sobre los juegos que consumen, además de datos adicionales como si recomiendan o no ese juego, emoticones de gracioso y estadísticas de si el comentario fué útil o no para otros usuarios. También presenta el id del usuario que comenta con su url del perfil y el id del juego que comenta.
+* **australian_user_reviews.json** es un dataset que contiene los comentarios que los usuarios realizaron sobre los juegos que consumen, además de datos adicionales como si recomiendan o no ese juego, emoticones de gracioso y estadísticas de si el comentario fue útil o no para otros usuarios. También presenta el id del usuario que comenta con su url del perfil y el id del juego que comenta.
 
 * **australian_users_items.json** es un dataset que contiene información sobre los juegos que juegan todos los usuarios, así como el tiempo acumulado que cada usuario jugó a un determinado juego.
 
 * **output_steam_games.json** es un dataset que contiene datos relacionados con los juegos en sí, como los título, el desarrollador, los precios, características técnicas, etiquetas, entre otros datos.
 
-En el documento [Diccionario de datos](https://github.com/IngCarlaPezzone/PI1_MLOps_videojuegos/blob/main/JupyterNotebooks/00_Diccionario_de_datos.md) se encutran los detalles de cada una de las variables de los conjuntos de datos.
+En el documento [Diccionario de datos](https://github.com/IngCarlaPezzone/PI1_MLOps_videojuegos/blob/main/JupyterNotebooks/00_Diccionario_de_datos.md) se encuetran los detalles de cada una de las variables de los conjuntos de datos.
 
 ## Tareas desarrolladas
 
@@ -39,7 +39,7 @@ Los detalles del ETL se puede ver en [ETL output_steam_games](https://github.com
 
 ### Feature engineering
 
-Uno de los pedidos para este proyecto fue aplicar un análisis de sentimiento a los reviews de los usuarios. Para ello se creó una nueva columna llamada 'sentiment_analysis' que reemplaza a 'reviews_review' donde clasifique los sentimientos de los comentarios con la siguiente escala:
+Uno de los pedidos para este proyecto fue aplicar un análisis de sentimiento a los reviews de los usuarios. Para ello se creó una nueva columna llamada 'sentiment_analysis' que reemplaza a la columna que contiene los reviews donde clasifica los sentimientos de los comentarios con la siguiente escala:
 
 * 0 si es malo,
 * 1 si es neutral o esta sin review
@@ -63,9 +63,9 @@ El desarrollo de este análisis se encuentra en la Jupyter Notebook [EDA](https:
 
 ### Modelo de aprendizaje automático
 
-Se crearon dos modelos de recomendación, que generen una lista de 5 juegos ya sea ingresando el nombre de un juego o el id de un usuario.
+Se crearon dos modelos de recomendación, que generan cada uno, una lista de 5 juegos ya sea ingresando el nombre de un juego o el id de un usuario.
 
-En el primer caso, el modelo tiene una relación ítem-ítem, esto es se toma un juego y en base a que tan similar es ese juego con el resto de los juegos se recomiendan similares. En el segundo caso, el modelo aplicar un filtro usuario-juego, es decir, toma un usuario, encuentra usuarios similares y se recomiendan ítems que a esos usuarios similares les gustaron.
+En el primer caso, el modelo tiene una relación ítem-ítem, esto es, se toma un juego y en base a que tan similar es ese juego con el resto de los juegos se recomiendan similares. En el segundo caso, el modelo aplicar un filtro usuario-juego, es decir, toma un usuario, encuentra usuarios similares y se recomiendan ítems que a esos usuarios similares les gustaron.
 
 Para generar estos modelos se adoptaron algoritmos basados en la memoria, los que abordan el problema del **filtrado colaborativo** utilizando toda la base de datos, tratando de encontrar usuarios similares al usuario activo (es decir, los usuarios para los que se les quiere recomendar) y utilizando sus preferencias para predecir las valoraciones del usuario activo.
 
@@ -125,14 +125,14 @@ En este [video]() se explica brevemente este proyecto mostrando el funcionamient
 
 ## Oportunidades de mejoras
 
-Dado que el objetivo de este proyecto fue presentar un Producto Mínimo Viable, se realizaron algunos análsis básicos que se podrían mejorar en próximas etapas, con la idea de lograr un producto completo. Por ejemplo:
+Dado que el objetivo de este proyecto fue presentar un Producto Mínimo Viable, se realizaron algunos análisis básicos que se podrían mejorar en próximas etapas, con la idea de lograr un producto completo. Por ejemplo:
 
 * **Análsis de sentimiento**: se puede hacer la limpieza de los comentarios, dado que los mismos se encuentran en distintos idiomas, con emoticones y signos de puntuación. Por otra parte, se puede evaluar el rendimiento del modelo probando con distintos umbrales de clasificación.
 
 * **Modelos de recomendación**: se puede crear un rating que considere la influencia de las horas de juego de los usuarios, la utilizadad hacia otros usuarios de los comentarios, el precio de los juegos, entre otras variables. También se podrían evaluar otras librerías que realizar este tipo de modelos.
 
-* **EDA mas exhaustivo***: se puede hacer un análisis exploratorio de datos mas exhaustivo, buscando mas relaciones entre los juego y usarios que permitan crear un puntaje mas representativo para hacer las recomendaciones.
+* **EDA más exhaustivo**: se puede hacer un análisis exploratorio de datos mas exhaustivo, buscando mas relaciones entre los juego y usarios que permitan crear un puntaje mas representativo para hacer las recomendaciones.
 
-* **ETL mas exhaustivo**: se pueden haces mas transformaciones en algunas variables usadas en la API, como por ejemplo precios, donde muchos campos tenían palabras y solo se cambió por precio cero, porque muchos textos se referian a juegos gratuitos, pero no se observó en detalle. También había datos faltantes que se completaron con 0, pero no se investigó si eran juegos gratuitos. Esto puede afectar a los resultados de la API donde pregunta por porcentaje de juegos gratuitos.
+* **ETL más exhaustivo**: se pueden haces más transformaciones en algunas variables usadas en la API, como por ejemplo precios, donde muchos campos tenían palabras y solo se cambió por precio cero, porque muchos textos se referian a juegos gratuitos, pero no se observó en detalle. También había datos faltantes que se completaron con 0, pero no se investigó si eran juegos gratuitos. Esto puede afectar a los resultados de la API donde pregunta por porcentaje de juegos gratuitos.
 
-* **Otros servicios de nube**: se pueden investigar otras formas de deployar la API de modo de no tener las limitaciones de capacidad de almacenamiento y poder utilizar la última función del modelo de recomendación o buscar alternativas para conectar con los datos.
+* **Otros servicios de nube**: se pueden investigar otras formas de deployar la API de modo de no tener las limitaciones de capacidad de almacenamiento y poder utilizar la última función del modelo de recomendación o buscar alternativas para almacenar los datos por fuera de Render y conectar con esa fuente para las consultas.
