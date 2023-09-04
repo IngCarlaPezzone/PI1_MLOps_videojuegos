@@ -1,9 +1,10 @@
+## FUNCIONES DE UTILIDAD PARA EL ETL Y EDA
+# Importaciones
 import pandas as pd
 from textblob import TextBlob
 import re
-import matplotlib.pyplot as plt
-import seaborn as sns
 
+# Funciones
 def verificar_tipo_datos(df):
     '''
     Realiza un análisis de los tipos de datos y la presencia de valores nulos en un DataFrame.
@@ -176,13 +177,20 @@ def convertir_fecha(cadena_fecha):
         return 'Formato inválido'
 
 def resumen_cant_porcentaje(df, columna):
-    # Count the number of True and False values in the 'reviews_recommend' column
+    '''
+    Cuanta la cantidad de True/False luego calcula el porcentaje.
+
+    Parameters:
+    - df (DataFrame): El DataFrame que contiene los datos.
+    - columna (str): El nombre de la columna en el DataFrame para la cual se desea generar el resumen.
+
+    Returns:
+    DataFrame: Un DataFrame que resume la cantidad y el porcentaje de True/False en la columna especificada.
+    '''
+    # Cuanta la cantidad de True/False luego calcula el porcentaje
     counts = df[columna].value_counts()
-
-    # Calculate the percentage of True and False values
     percentages = round(100 * counts / len(df),2)
-
-    # Create a DataFrame with the counts and percentages
+    # Crea un dataframe con el resumen
     df_results = pd.DataFrame({
         "Cantidad": counts,
         "Porcentaje": percentages
@@ -191,7 +199,13 @@ def resumen_cant_porcentaje(df, columna):
 
 def bigote_max(columna):
     '''
-    Calcula el valor del bigote máximo y la cantidad de valores que se encuentran como valores atípicos.
+    Calcula el valor del bigote superior y la cantidad de valores atípicos en una columna.
+
+    Parameters:
+    - columna (pandas.Series): La columna de datos para la cual se desea calcular el bigote superior y encontrar valores atípicos.
+
+    Returns:
+    None
     '''
     # Cuartiles
     q1 = columna.describe()[4]
