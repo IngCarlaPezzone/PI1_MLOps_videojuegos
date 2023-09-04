@@ -121,7 +121,7 @@ Como se indicó anteriormente, para el despliegue automático, Render utiliza Gi
 
 ### Video
 
-En este [video]() se explica brevemente este proyecto mostrando el funcionamiento de la API.
+En este [video](https://drive.google.com/drive/folders/1f9oNkyq7fc44Cxppi8AS8Atrl3jbrma3?usp=sharing) se explica brevemente este proyecto mostrando el funcionamiento de la API.
 
 ## Oportunidades de mejoras
 
