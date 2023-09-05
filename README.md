@@ -117,11 +117,11 @@ Para el deploy de la API se seleccionó la plataforma Render que es una nube uni
 - Se generó un servicio nuevo  en `render.com`, conectado al presente repositorio y utilizando Docker como Runtime.
 - Finalmente, el servicio queda corriendo en `https://pi1-games.onrender.com/`.
 
-Como se indicó anteriormente, para el despliegue automático, Render utiliza GitHub y dado que el servicio gratuito cuenta con una limitada capacidad de almacenamiento, se realizó un repositorio exclusivo para el deploy, el cual se encuenta [aqui](https://www.loom.com/share/e8b35408e2ae49b8afb4553763fe20fc?sid=95962150-159f-401e-8ec2-6f5095d94e00).
+Como se indicó anteriormente, para el despliegue automático, Render utiliza GitHub y dado que el servicio gratuito cuenta con una limitada capacidad de almacenamiento, se realizó un repositorio exclusivo para el deploy, el cual se encuenta [aqui](https://github.com/IngCarlaPezzone/PI1_deploy_render).
 
 ### Video
 
-En este [video](https://drive.google.com/drive/folders/1f9oNkyq7fc44Cxppi8AS8Atrl3jbrma3?usp=sharing) se explica brevemente este proyecto mostrando el funcionamiento de la API.
+En este [video](https://www.loom.com/share/e8b35408e2ae49b8afb4553763fe20fc?sid=95962150-159f-401e-8ec2-6f5095d94e00) se explica brevemente este proyecto mostrando el funcionamiento de la API.
 
 ## Oportunidades de mejoras
 
