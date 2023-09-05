@@ -115,7 +115,7 @@ Para el deploy de la API se seleccionó la plataforma Render que es una nube uni
 
 - Generación de un Dockerfile cuya imagen es Python 3.10. Esto se hace porque Render usa por defecto Python 3.7, lo que no es compatible con las versiones de las librerías trabajadas en este proyecto, por tal motivo, se optó por deployar el proyecto dentro de este contenedor. Se puede ver el detalle del documento [Dockerfile](https://github.com/IngCarlaPezzone/PI1_MLOps_videojuegos/blob/main/Dockerfile).
 - Se generó un servicio nuevo  en `render.com`, conectado al presente repositorio y utilizando Docker como Runtime.
-- Finalmente, el servicio queda corriendo en `https://pi1-games.onrender.com/`.
+- Finalmente, el servicio queda corriendo en [https://pi1-games.onrender.com/](https://pi1-games.onrender.com/).
 
 Como se indicó anteriormente, para el despliegue automático, Render utiliza GitHub y dado que el servicio gratuito cuenta con una limitada capacidad de almacenamiento, se realizó un repositorio exclusivo para el deploy, el cual se encuenta [aqui](https://github.com/IngCarlaPezzone/PI1_deploy_render).
 
